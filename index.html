@@ -2,31 +2,33 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kids Magic Quiz - खेल खेल में सीखें</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Super Kids Quiz - Advanced</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #a8e6cf;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       --card-bg: #ffffff;
       --text: #2d3436;
       --pink: #ff7675;
       --blue: #74b9ff;
       --yellow: #ffeaa7;
       --green: #55efc4;
-      --shadow: 0 10px 20px rgba(0,0,0,0.1);
+      --purple: #a29bfe;
+      --shadow: 0 15px 30px rgba(0,0,0,0.15);
     }
 
     * {
       box-sizing: border-box;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
       min-height: 100vh;
       font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+      background: var(--bg-gradient);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -34,440 +36,615 @@
       color: var(--text);
     }
 
-    /* Background floating emojis */
-    .bg-emoji {
+    /* Background Animated Bubbles */
+    .bubble {
       position: absolute;
-      font-size: 3rem;
-      opacity: 0.3;
-      animation: float 6s ease-in-out infinite;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      animation: floatUp 10s linear infinite;
       z-index: 0;
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(10deg); }
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      50% { opacity: 0.5; }
+      100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
     }
 
-    .game-container {
+    .app-container {
       position: relative;
       z-index: 1;
-      width: min(95%, 600px);
+      width: min(95%, 550px);
       background: var(--card-bg);
       border-radius: 40px;
-      padding: 30px 20px;
-      box-shadow: var(--shadow), inset 0 -8px 0 rgba(0,0,0,0.05);
+      padding: 25px 20px 35px;
+      box-shadow: var(--shadow), inset 0 -10px 0 rgba(0,0,0,0.08);
       text-align: center;
-      border: 5px solid #fff;
+      border: 6px solid #fff;
+      transition: all 0.3s ease;
     }
+
+    /* --- SCREENS --- */
+    .screen { display: none; animation: fadeIn 0.4s ease; }
+    .screen.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
     /* --- START SCREEN --- */
-    #startScreen h1 {
+    .game-title {
       font-family: 'Fredoka One', cursive;
-      font-size: 2.5rem;
+      font-size: 2.8rem;
+      line-height: 1.1;
       color: var(--pink);
-      margin-bottom: 10px;
+      margin-bottom: 5px;
       text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(255,118,117,0.3);
     }
-    #startScreen p {
-      font-size: 1.2rem;
+    .subtitle {
+      font-size: 1.1rem;
       color: #636e72;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
+      font-weight: 800;
     }
-    .big-btn {
-      background: var(--blue);
-      color: white;
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .cat-btn {
       border: none;
-      border-radius: 30px;
-      padding: 20px 50px;
-      font-size: 1.5rem;
-      font-weight: 900;
+      border-radius: 20px;
+      padding: 15px;
       font-family: 'Fredoka One', cursive;
+      font-size: 1.2rem;
       cursor: pointer;
-      box-shadow: 0 8px 0 #0984e3;
-      transition: all 0.1s;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+      transition: transform 0.1s, box-shadow 0.1s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
     }
-    .big-btn:active {
-      transform: translateY(8px);
-      box-shadow: 0 0px 0 #0984e3;
-    }
+    .cat-btn span { font-size: 2rem; }
+    .cat-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 rgba(0,0,0,0.15); }
+    
+    .cat-fruits { background: #ffb8b8; color: #c0392b; }
+    .cat-animals { background: #a8e6cf; color: #27ae60; }
+    .cat-arabic { background: #dfe6e9; color: #2d3436; }
+    .cat-vehicles { background: #ffeaa7; color: #d35400; }
 
     /* --- GAME SCREEN --- */
-    #gameScreen { display: none; }
-
-    .top-bar {
+    .game-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
-      padding: 0 10px;
+      margin-bottom: 15px;
     }
-    .score-box {
-      font-family: 'Fredoka One', cursive;
-      font-size: 1.5rem;
-      color: #fdcb6e;
-      background: #fff8e1;
-      padding: 8px 20px;
-      border-radius: 20px;
-      border: 3px solid #ffeaa7;
-    }
-    .sound-btn {
-      background: #dfe6e9;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      box-shadow: 0 4px 0 #b2bec3;
-    }
-    .sound-btn:active {
-      transform: translateY(4px);
-      box-shadow: 0 0px 0 #b2bec3;
-    }
-
-    .question-text {
-      font-size: 1.8rem;
+    .stat-box {
+      background: #f1f2f6;
+      padding: 8px 15px;
+      border-radius: 15px;
       font-weight: 900;
-      color: #2d3436;
-      margin-bottom: 30px;
-      min-height: 70px;
+      font-size: 1.1rem;
+      color: #57606f;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 5px;
+    }
+    .streak-fire { color: #e74c3c; animation: pulse 1s infinite; }
+
+    .progress-container {
+      width: 100%;
+      height: 12px;
+      background: #dfe6e9;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #00b894, #55efc4);
+      width: 0%;
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    .question-box {
+      margin-bottom: 20px;
+    }
+    .q-emoji {
+      font-size: 4.5rem;
+      margin-bottom: 5px;
+      animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .q-text {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #2d3436;
+      min-height: 40px;
+    }
+    .q-arabic {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #2d3436;
+      font-family: "Traditional Arabic", "Amiri", serif;
+      direction: rtl;
     }
 
     .options-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
-      margin-bottom: 20px;
     }
-
     .option-btn {
-      background: #fdfbfb;
-      border: 4px solid #eee;
+      background: #fff;
+      border: 4px solid #f1f2f6;
       border-radius: 25px;
-      min-height: 120px;
-      font-size: 3.5rem;
+      min-height: 100px;
+      font-size: 2.8rem;
+      font-weight: 900;
       cursor: pointer;
-      transition: transform 0.2s, background 0.2s, border-color 0.2s;
-      box-shadow: 0 6px 0 #eee;
+      box-shadow: 0 6px 0 #f1f2f6;
+      transition: all 0.2s;
       display: flex;
       justify-content: center;
       align-items: center;
+      color: #2d3436;
     }
-    .option-btn:hover {
-      transform: scale(1.05);
-      border-color: var(--blue);
-    }
-    .option-btn:active {
-      transform: scale(0.95);
-      box-shadow: 0 2px 0 #eee;
-    }
+    .option-btn:hover { border-color: var(--purple); }
+    .option-btn:active { transform: scale(0.95); box-shadow: 0 2px 0 #f1f2f6; }
+    
+    /* Feedback States */
+    .option-btn.correct { background: #d4edda; border-color: #28a745; box-shadow: 0 6px 0 #28a745; animation: pop 0.4s; }
+    .option-btn.wrong { background: #f8d7da; border-color: #dc3545; box-shadow: 0 6px 0 #dc3545; animation: shake 0.4s; }
+    .option-btn.disabled { pointer-events: none; opacity: 0.7; }
 
-    /* Right / Wrong Animations */
-    .option-btn.correct {
-      background: #d4edda;
-      border-color: #28a745;
-      box-shadow: 0 6px 0 #28a745;
-      animation: pop 0.4s ease;
-    }
-    .option-btn.wrong {
-      background: #f8d7da;
-      border-color: #dc3545;
-      box-shadow: 0 6px 0 #dc3545;
-      animation: shake 0.4s ease;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
+    @keyframes pop { 0%{transform:scale(1);} 50%{transform:scale(1.15);} 100%{transform:scale(1);} }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px);} 75%{transform:translateX(10px);} }
 
     /* --- END SCREEN --- */
-    #endScreen { display: none; }
-    #endScreen h1 {
+    .result-stars { font-size: 4rem; margin: 10px 0; }
+    .result-score { font-size: 2rem; font-weight: 900; color: var(--purple); margin-bottom: 20px; }
+    .action-btn {
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 15px 30px;
       font-family: 'Fredoka One', cursive;
-      font-size: 3rem;
-      color: #fdcb6e;
-      text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(253,203,110,0.4);
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #0984e3;
+      margin: 5px;
+      transition: all 0.1s;
     }
-    .stars-earned {
-      font-size: 4rem;
-      margin: 20px 0;
-      animation: bounce 1s infinite alternate;
-    }
-    @keyframes bounce {
-      from { transform: translateY(0); }
-      to { transform: translateY(-15px); }
-    }
+    .action-btn:active { transform: translateY(6px); box-shadow: 0 0px 0 #0984e3; }
+    .action-btn.secondary { background: #b2bec3; box-shadow: 0 6px 0 #636e72; }
 
-    /* Responsive */
-    @media (max-width: 500px) {
-      .option-btn { min-height: 90px; font-size: 2.8rem; }
-      .question-text { font-size: 1.5rem; }
-      #startScreen h1 { font-size: 2rem; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Background Decorations -->
-  <div class="bg-emoji" style="top: 10%; left: 10%;">☁️</div>
-  <div class="bg-emoji" style="bottom: 15%; left: 5%;">🌟</div>
-  <div class="bg-emoji" style="top: 20%; right: 10%;">🎈</div>
-  <div class="bg-emoji" style="bottom: 10%; right: 15%;">🍎</div>
-
-  <div class="game-container">
+  <div class="app-container">
     
-    <!-- START SCREEN -->
-    <div id="startScreen">
-      <h1>🎮 जादुई खेल 🎮</h1>
-      <p>चलो खेल-खेल में सीखें!</p>
-      <button class="big-btn" onclick="startGame()">खेलना शुरू करें ▶</button>
+    <!-- 1. START SCREEN -->
+    <div id="startScreen" class="screen active">
+      <h1 class="game-title">Magic Quiz</h1>
+      <p class="subtitle">अपना पसंदीदा खेल चुनें! 🎮</p>
+      
+      <div class="category-grid">
+        <button class="cat-btn cat-fruits" onclick="startGame('fruits')">
+          <span>🍎</span> Fruits
+        </button>
+        <button class="cat-btn cat-animals" onclick="startGame('animals')">
+          <span>🦁</span> Animals
+        </button>
+        <button class="cat-btn cat-arabic" onclick="startGame('arabic')">
+          <span>ا</span> Arabic
+        </button>
+        <button class="cat-btn cat-vehicles" onclick="startGame('vehicles')">
+          <span>🚗</span> Vehicles
+        </button>
+      </div>
     </div>
 
-    <!-- GAME SCREEN -->
-    <div id="gameScreen">
-      <div class="top-bar">
-        <div class="score-box">⭐ <span id="score">0</span></div>
-        <button class="sound-btn" onclick="speakCurrentQuestion()">🔊</button>
+    <!-- 2. GAME SCREEN -->
+    <div id="gameScreen" class="screen">
+      <div class="game-header">
+        <div class="stat-box">⭐ <span id="score">0</span></div>
+        <div class="stat-box" id="streakBox" style="display: none;">🔥 <span id="streak">0</span></div>
+        <div class="stat-box">Q: <span id="qCount">1</span>/10</div>
       </div>
-      
-      <div class="question-text" id="questionText">Loading...</div>
-      
+
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div class="question-box">
+        <div id="questionVisual" class="q-emoji">🍎</div>
+        <div id="questionText" class="q-text">Apple कौन सा है?</div>
+      </div>
+
       <div class="options-grid" id="optionsGrid">
-        <!-- Options will be injected here -->
+        <!-- Options go here -->
       </div>
     </div>
 
-    <!-- END SCREEN -->
-    <div id="endScreen">
-      <h1>शाबाश! (Well Done)</h1>
-      <p style="font-size: 1.5rem; font-weight: 800; color: #636e72;">तुमने पूरा खेल जीत लिया!</p>
-      <div class="stars-earned">⭐⭐⭐</div>
-      <button class="big-btn" onclick="startGame()">फिर से खेलें 🔄</button>
+    <!-- 3. END SCREEN -->
+    <div id="endScreen" class="screen">
+      <h1 class="game-title" style="color:var(--green);">शाबाश! (Well Done)</h1>
+      <div class="result-stars" id="resultStars">⭐⭐⭐</div>
+      <div class="result-score">Score: <span id="finalScore">0</span></div>
+      
+      <button class="action-btn" onclick="startGame(currentCategory)">फिर से खेलें 🔄</button>
+      <button class="action-btn secondary" onclick="goHome()">होम 🏠</button>
     </div>
 
   </div>
 
   <script>
     /* =========================================================
-       1. GAME DATA (Questions & Options)
+       1. DATA SETUP (Advanced Questions)
        ========================================================= */
-    const QUESTIONS = [
-      // Fruits
-      { q: "🍎 Apple कौन सा है?", a: "🍎", opts: ["🍎", "🍌", "🍇", "🍊"], speak: "Find the Apple" },
-      { q: "🍌 Banana कौन सा है?", a: "🍌", opts: ["🍉", "🍎", "🍌", "🍓"], speak: "Find the Banana" },
-      // Animals
-      { q: "🦁 Lion कौन सा है?", a: "🦁", opts: ["🐶", "🐱", "🐘", "🦁"], speak: "Find the Lion" },
-      { q: "🐘 Elephant कौन सा है?", a: "🐘", opts: ["🐘", "🦒", "🐒", "🐯"], speak: "Find the Elephant" },
-      // Arabic Letters
-      { q: "Alif (ا) कौन सा है?", a: "ا", opts: ["ب", "ا", "ت", "ث"], speak: "Find Alif" },
-      { q: "Baa (ب) कौन सा है?", a: "ب", opts: ["ج", "ب", "د", "ر"], speak: "Find Baa" },
-      // Vehicles
-      { q: "🚗 Car कौन सी है?", a: "🚗", opts: ["🚌", "🚲", "🚗", "🚂"], speak: "Find the Car" },
-      { q: "🚀 Rocket कौन सा है?", a: "🚀", opts: ["✈️", "🚁", "🚀", "🚢"], speak: "Find the Rocket" }
-    ];
-
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let isAnswering = false; // Blocks clicks while animating
-
-    // DOM Elements
-    const startScreen = document.getElementById("startScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const endScreen = document.getElementById("endScreen");
-    const questionText = document.getElementById("questionText");
-    const optionsGrid = document.getElementById("optionsGrid");
-    const scoreDisplay = document.getElementById("score");
+    const DATA = {
+      fruits: [
+        { name: "Apple", hi: "सेब", emoji: "🍎" },
+        { name: "Banana", hi: "केला", emoji: "🍌" },
+        { name: "Grapes", hi: "अंगूर", emoji: "🍇" },
+        { name: "Orange", hi: "संतरा", emoji: "🍊" },
+        { name: "Watermelon", hi: "तरबूज", emoji: "🍉" },
+        { name: "Strawberry", hi: "स्ट्रॉबेरी", emoji: "🍓" },
+        { name: "Mango", hi: "आम", emoji: "🥭" }
+      ],
+      animals: [
+        { name: "Lion", hi: "शेर", emoji: "🦁" },
+        { name: "Elephant", hi: "हाथी", emoji: "🐘" },
+        { name: "Monkey", hi: "बंदर", emoji: "🐒" },
+        { name: "Tiger", hi: "बाघ", emoji: "🐯" },
+        { name: "Dog", hi: "कुत्ता", emoji: "🐶" },
+        { name: "Cat", hi: "बिल्ली", emoji: "🐱" },
+        { name: "Rabbit", hi: "खरगोश", emoji: "🐰" }
+      ],
+      arabic: [
+        { name: "Alif", hi: "अलिफ़", emoji: "ا" },
+        { name: "Baa", hi: "बा", emoji: "ب" },
+        { name: "Taa", hi: "ता", emoji: "ت" },
+        { name: "Jeem", hi: "जीम", emoji: "ج" },
+        { name: "Haa", hi: "हा", emoji: "ح" },
+        { name: "Daal", hi: "दाल", emoji: "د" },
+        { name: "Raa", hi: "रा", emoji: "ر" }
+      ],
+      vehicles: [
+        { name: "Car", hi: "कार", emoji: "🚗" },
+        { name: "Bus", hi: "बस", emoji: "🚌" },
+        { name: "Train", hi: "ट्रेन", emoji: "🚂" },
+        { name: "Airplane", hi: "हवाई जहाज", emoji: "✈️" },
+        { name: "Bicycle", hi: "साइकिल", emoji: "🚲" },
+        { name: "Rocket", hi: "रॉकेट", emoji: "🚀" },
+        { name: "Ship", hi: "जहाज", emoji: "🚢" }
+      ]
+    };
 
     /* =========================================================
-       2. AUDIO SYNTHESIS (For correct/wrong sounds)
+       2. GAME STATE
        ========================================================= */
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let currentCategory = "";
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let isAnswering = false;
+    const TOTAL_QUESTIONS = 10;
+
+    // DOM Elements
+    const screens = {
+      start: document.getElementById("startScreen"),
+      game: document.getElementById("gameScreen"),
+      end: document.getElementById("endScreen")
+    };
+    const ui = {
+      score: document.getElementById("score"),
+      streakBox: document.getElementById("streakBox"),
+      streak: document.getElementById("streak"),
+      qCount: document.getElementById("qCount"),
+      progressBar: document.getElementById("progressBar"),
+      visual: document.getElementById("questionVisual"),
+      text: document.getElementById("questionText"),
+      options: document.getElementById("optionsGrid"),
+      finalScore: document.getElementById("finalScore"),
+      resultStars: document.getElementById("resultStars")
+    };
+
+    /* =========================================================
+       3. AUDIO & SPEECH ENGINE
+       ========================================================= */
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
 
     function playSound(type) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!audioCtx) return;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      
       osc.connect(gain);
       gain.connect(audioCtx.destination);
 
       if (type === 'correct') {
-        // Happy ding (C5 -> E5 -> G5)
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+        osc.frequency.setValueAtTime(554, audioCtx.currentTime + 0.1); // C#5
+        osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.2); // E5
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
+        osc.stop(audioCtx.currentTime + 0.4);
       } else if (type === 'wrong') {
-        // Buzzer
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(150, audioCtx.currentTime);
         osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.3);
+      } else if (type === 'win') {
+        // Win fanfare
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, i) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.connect(g); g.connect(audioCtx.destination);
+          o.type = 'triangle';
+          o.frequency.value = freq;
+          g.gain.setValueAtTime(0.15, audioCtx.currentTime + (i*0.15));
+          g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i*0.15) + 0.3);
+          o.start(audioCtx.currentTime + (i*0.15));
+          o.stop(audioCtx.currentTime + (i*0.15) + 0.3);
+        });
       }
     }
 
-    /* =========================================================
-       3. VOICE (Text to Speech)
-       ========================================================= */
-    function speakText(text) {
+    function speak(text) {
       if (!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
-      
       const utt = new SpeechSynthesisUtterance(text);
       utt.lang = 'en-US';
       utt.rate = 0.85;
-      utt.pitch = 1.2; // Cute, high-pitched voice for kids
+      utt.pitch = 1.1;
       
-      // Try to find a female/child voice
       const voices = speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Google') || v.name.includes('Samantha')));
+      const preferred = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Google')));
       if (preferred) utt.voice = preferred;
-
+      
       speechSynthesis.speak(utt);
-    }
-
-    function speakCurrentQuestion() {
-      if (QUESTIONS[currentQuestionIndex]) {
-        speakText(QUESTIONS[currentQuestionIndex].speak);
-      }
     }
 
     /* =========================================================
        4. GAME LOGIC
        ========================================================= */
-    function startGame() {
-      // Resume audio context on user interaction
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      
-      startScreen.style.display = "none";
-      endScreen.style.display = "none";
-      gameScreen.style.display = "block";
-      
-      currentQuestionIndex = 0;
+    function showScreen(screenName) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[screenName].classList.add('active');
+    }
+
+    function startGame(category) {
+      initAudio();
+      currentCategory = category;
+      currentIndex = 0;
       score = 0;
-      scoreDisplay.textContent = score;
+      streak = 0;
+      isAnswering = false;
       
+      ui.score.textContent = score;
+      ui.streakBox.style.display = "none";
+      ui.streak.textContent = streak;
+      
+      // Generate 10 random questions
+      const pool = DATA[category];
+      questions = [];
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        // Pick random correct answer
+        const correctItem = pool[Math.floor(Math.random() * pool.length)];
+        
+        // Pick 3 random wrong answers
+        let wrongItems = [];
+        while(wrongItems.length < 3) {
+          const w = pool[Math.floor(Math.random() * pool.length)];
+          if (w.name !== correctItem.name && !wrongItems.includes(w)) {
+            wrongItems.push(w);
+          }
+        }
+        
+        // Combine and shuffle
+        const options = [correctItem, ...wrongItems].sort(() => Math.random() - 0.5);
+        questions.push({ correct: correctItem, options });
+      }
+
+      showScreen('game');
       loadQuestion();
     }
 
     function loadQuestion() {
-      if (currentQuestionIndex >= QUESTIONS.length) {
-        showEndScreen();
+      if (currentIndex >= TOTAL_QUESTIONS) {
+        endGame();
         return;
       }
 
       isAnswering = false;
-      const currentQ = QUESTIONS[currentQuestionIndex];
+      const q = questions[currentIndex];
       
-      // Update Text
-      questionText.textContent = currentQ.q;
+      // Update UI
+      ui.qCount.textContent = currentIndex + 1;
+      ui.progressBar.style.width = ((currentIndex) / TOTAL_QUESTIONS) * 100 + "%";
       
-      // Auto Speak the question
-      speakText(currentQ.speak);
+      // Set Question Visual & Text
+      // Alternate between "Find the [Name]" and "What is this [Emoji]?"
+      if (currentIndex % 2 === 0) {
+        // Show Emoji, Ask Name
+        ui.visual.textContent = q.correct.emoji;
+        ui.visual.className = currentCategory === 'arabic' ? 'q-arabic' : 'q-emoji';
+        ui.text.textContent = `यह क्या है? (What is this?)`;
+        speak(`What is this?`);
+      } else {
+        // Show Name, Ask Emoji
+        ui.visual.textContent = "🤔";
+        ui.visual.className = "q-emoji";
+        ui.text.textContent = `"${q.correct.name}" कौन सा है?`;
+        speak(`Find ${q.correct.name}`);
+      }
 
-      // Shuffle options
-      const shuffledOpts = [...currentQ.opts].sort(() => Math.random() - 0.5);
-
-      // Render options
-      optionsGrid.innerHTML = "";
-      shuffledOpts.forEach(opt => {
+      // Render Options
+      ui.options.innerHTML = "";
+      q.options.forEach(opt => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
-        btn.textContent = opt;
-        btn.onclick = () => checkAnswer(btn, opt, currentQ.a);
-        optionsGrid.appendChild(btn);
+        
+        // If Question type 1 (Show Emoji), options should be text. 
+        // If Question type 2 (Show Name), options should be emojis.
+        if (currentIndex % 2 === 0) {
+          btn.textContent = opt.name;
+          btn.style.fontSize = "1.4rem"; // Text needs smaller font
+          btn.style.fontFamily = "'Nunito', sans-serif";
+        } else {
+          btn.textContent = opt.emoji;
+          btn.style.fontSize = currentCategory === 'arabic' ? "3rem" : "3.5rem";
+          btn.style.fontFamily = currentCategory === 'arabic' ? "'Traditional Arabic', serif" : "inherit";
+        }
+
+        btn.onclick = () => handleAnswer(btn, opt);
+        ui.options.appendChild(btn);
       });
     }
 
-    function checkAnswer(btn, selected, correctAnswer) {
-      if (isAnswering) return; // Prevent spam clicking
+    function handleAnswer(btn, selectedOpt) {
+      if (isAnswering) return;
       isAnswering = true;
 
-      if (selected === correctAnswer) {
-        // CORRECT
+      const q = questions[currentIndex];
+      const isCorrect = selectedOpt.name === q.correct.name;
+
+      // Disable all buttons
+      Array.from(ui.options.children).forEach(b => b.classList.add("disabled"));
+
+      if (isCorrect) {
         btn.classList.add("correct");
         playSound("correct");
         
-        // Update score
+        // Update Score & Streak
         score += 10;
-        scoreDisplay.textContent = score;
+        streak++;
+        
+        ui.score.textContent = score;
+        ui.streak.textContent = streak;
+        ui.streakBox.style.display = "flex";
+        
+        // Pop animation for score
+        ui.score.parentElement.style.transform = "scale(1.2)";
+        setTimeout(() => ui.score.parentElement.style.transform = "scale(1)", 200);
 
-        // Add little pop effect to score
-        scoreDisplay.parentElement.style.transform = "scale(1.2)";
-        setTimeout(() => scoreDisplay.parentElement.style.transform = "scale(1)", 200);
-
-        // Next question after short delay
         setTimeout(() => {
-          currentQuestionIndex++;
+          currentIndex++;
           loadQuestion();
         }, 1200);
 
       } else {
-        // WRONG
         btn.classList.add("wrong");
+        // Highlight correct answer
+        Array.from(ui.options.children).forEach(b => {
+          if (b.textContent === q.correct.emoji || b.textContent === q.correct.name) {
+            b.classList.add("correct");
+          }
+        });
+
         playSound("wrong");
+        streak = 0;
+        ui.streakBox.style.display = "none";
+        speak("Oops! Wrong answer.");
 
-        // Let them try again after animation
         setTimeout(() => {
-          btn.classList.remove("wrong");
-          isAnswering = false; 
-        }, 600);
+          currentIndex++;
+          loadQuestion();
+        }, 2000);
       }
     }
 
-    function showEndScreen() {
-      gameScreen.style.display = "none";
-      endScreen.style.display = "block";
-      playSound("correct");
-      speakText("Wow! You won the game. Great job!");
-      
-      // Confetti effect (simple)
-      for(let i=0; i<20; i++) {
-        createConfetti();
-      }
-    }
-
-    // Simple confetti using emojis
-    function createConfetti() {
-      const emojis = ["🎉", "⭐", "✨", "🎈", "🌟"];
-      const el = document.createElement("div");
-      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      el.style.position = "fixed";
-      el.style.left = Math.random() * 100 + "vw";
-      el.style.top = "-50px";
-      el.style.fontSize = (Math.random() * 20 + 20) + "px";
-      el.style.transition = "transform 3s linear, opacity 3s";
-      el.style.zIndex = "9999";
-      document.body.appendChild(el);
-
+    function endGame() {
+      ui.progressBar.style.width = "100%";
       setTimeout(() => {
-        el.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 720}deg)`;
-        el.style.opacity = "0";
-      }, 50);
-
-      setTimeout(() => el.remove(), 3000);
+        showScreen('end');
+        ui.finalScore.textContent = score;
+        
+        // Calculate stars
+        let stars = "⭐";
+        if (score >= 70) stars = "⭐⭐⭐";
+        else if (score >= 40) stars = "⭐⭐";
+        
+        ui.resultStars.textContent = stars;
+        
+        playSound("win");
+        speak(`Wow! You scored ${score} points. Great job!`);
+        
+        if (score >= 70) triggerConfetti();
+      }, 500);
     }
 
-    // Warm up voices
+    function goHome() {
+      showScreen('start');
+    }
+
+    /* =========================================================
+       5. VISUAL EFFECTS (Confetti)
+       ========================================================= */
+    function triggerConfetti() {
+      const colors = ['#ff7675', '#74b9ff', '#ffeaa7', '#55efc4', '#a29bfe'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement("div");
+        confetti.style.position = "fixed";
+        confetti.style.width = Math.random() * 10 + 5 + "px";
+        confetti.style.height = Math.random() * 10 + 5 + "px";
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.top = "-20px";
+        confetti.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
+        confetti.style.zIndex = "9999";
+        confetti.style.transition = `transform ${Math.random() * 2 + 2}s linear, opacity 2s`;
+        
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => {
+          confetti.style.transform = `translateY(${window.innerHeight + 50}px) rotate(${Math.random() * 720}deg)`;
+          confetti.style.opacity = "0";
+        }, 50);
+
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    // Init Voices
     if ("speechSynthesis" in window) {
       speechSynthesis.getVoices();
     }
+
+    // Generate Background Bubbles
+    for(let i=0; i<15; i++) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      const size = Math.random() * 80 + 20;
+      bubble.style.width = size + "px";
+      bubble.style.height = size + "px";
+      bubble.style.left = Math.random() * 100 + "vw";
+      bubble.style.animationDelay = Math.random() * 5 + "s";
+      bubble.style.animationDuration = Math.random() * 10 + 10 + "s";
+      document.body.appendChild(bubble);
+    }
+
   </script>
 </body>
 </html>
